@@ -14,7 +14,7 @@ void createFile(){ // Creates and names the file based on the users input
     if (output.is_open()) {
         std::cout << "Enter the information you want kept: \n";
         std::string message;
-        std::getline(std::cin, message);
+        std::cin >> message;
         output << message;
         output.close();
         std::cout << "Information stored!\n";
@@ -56,7 +56,7 @@ void updateFile(){ // Edits the content of the file
         output.is_open();
         std::cout << "What do you want to Update to this file?\n";
         std::string message;
-        std::getline(std::cin, message);
+        std::cin >> message;
         output << message;
         output.close();
         std::cout << "File " << fileName << " has been updated\n";
