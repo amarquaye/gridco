@@ -1,123 +1,117 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cstdio>
+#include <limits>
 
-void createFile(){ // Creates and names the file based on the users input 
+void createFile() {
     std::string fileName;
-    std::cout << "Enter the name of the file you want to create: \n";
+    std::cout << "Enter the name of the file you want to create: ";
     std::cin >> fileName;
     fileName += ".txt";
+
     std::ofstream output(fileName);
     std::cout << "File " << fileName << " created\n";
 
     if (output.is_open()) {
-        std::cout << "Enter the information you want kept: \n";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear the input buffer
         std::string message;
-        std::cin >> message;
+        std::cout << "Enter the information you want to keep: ";
+        std::getline(std::cin, message);
         output << message;
         output.close();
         std::cout << "Information stored!\n";
     }
 }
 
-void readFile(){ // Reads the content of the file
+void readFile() {
     std::string fileName;
-    std::cout << "Enter the name of the file you want to read from: \n";
+    std::cout << "Enter the name of the file you want to read from: ";
     std::cin >> fileName;
     fileName += ".txt";
 
-    std::string message;
-    std::ifstream output(fileName);
-    if(output){
+    std::string line;
+    std::ifstream input(fileName);
+    if (input.is_open()) {
         std::cout << "File found\n";
-        while(output){
-            message = output.get();
-            std::cout << message;
+        while (std::getline(input, line)) {
+            std::cout << line << std::endl;
         }
-        std::cout << " " << std::endl;
-    }
-    else{
+    } else {
         std::cout << "File not found\n";
     }
 }
 
-void updateFile(){ // Edits the content of the file
+void updateFile() {
     std::string fileName;
-    std::cout << "Enter the name of the file you want to update too: \n";
+    std::cout << "Enter the name of the file you want to update: ";
     std::cin >> fileName;
     fileName += ".txt";
 
     std::string message;
-    std::ifstream file(fileName);
-    if (file) {
+    std::ifstream inputFile(fileName);
+    if (inputFile.is_open()) {
         std::cout << "File found\n";
-        std::ofstream output(fileName);
-        output.is_open();
-        std::cout << "What do you want to Update to this file?\n";
-        std::string message;
-        std::cin >> message;
-        output << message;
-        output.close();
-        std::cout << "File " << fileName << " has been updated\n";
-    }
-    else {
-        std::cout << "This file does not exist. Create a new file.\n";
+        std::ofstream output(fileName, std::ios::app); // Open the file in append mode
+        if (output.is_open()) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "\n What do you want to update in this file: ";
+            std::getline(std::cin, message);
+            output << message;
+            output.close();
+            std::cout << "File " << fileName << " has been updated\n";
+        } else {
+            std::cout << "Unable to open the file for updating.\n";
+        }
+    } else {
+        std::cout << "File not found. Create a new file.\n";
     }
 }
 
-void deleteFile(){ // finds the file being looked for and deletes it
+void deleteFile() {
     std::string fileName;
-    std::cout << "Enter the name of the file you want to delete: \n";
+    std::cout << "Enter the name of the file you want to delete: ";
     std::cin >> fileName;
     fileName += ".txt";
-    int result  = std::remove(fileName.c_str());
-    std::cout << "File " << fileName << " has been deleted " << result << std::endl;
+
+    int result = std::remove(fileName.c_str());
+    if (result == 0) {
+        std::cout << "File " << fileName << " has been deleted\n";
+    } else {
+        std::cout << "Error deleting the file\n";
+    }
 }
 
-void closeApplication(){ // Self explanatory
+void closeApplication() {
     std::cout << "Closing Application.......\n";
 }
 
-void printInstructionText(){ //Prints the placeholder text
+void printInstructionText() {
     std::cout << "What do you want to do?\n";
-    std::cout << "c(Create) ,  r(Search and Read) ,  u(Update) ,  d(delete) ,  x(Close Program)\n";
+    std::cout << "c(Create), r(Read), u(Update), d(Delete), x(Close Program)\n";
 }
 
-int main(){
+int main() {
     std::string userInput;
     std::cout << "================= Welcome to Shege Pharmacy ==================\n";
-    printInstructionText();
-    std::cin >> userInput;
 
-    while(userInput != "x"){
-        if(userInput == "c"){
-            createFile();  //Creates the file
-            printInstructionText();
-            std::cin >> userInput;
-        }
-        else if(userInput == "r"){
-            readFile(); //Searches and reads from file
-            printInstructionText();
-            std::cin >> userInput;
-        }
-        else if(userInput == "u"){
-            updateFile(); //Updates the file of choice
-            printInstructionText();
-            std::cin >> userInput;
-        }
-        else if(userInput == "d"){
-            deleteFile(); //Deletes the file
-            printInstructionText();
-            std::cin >> userInput;
-        }
-        else if(userInput == "x"){
-            closeApplication();
-        }
-        else{
+    do {
+        printInstructionText();
+        std::cin >> userInput;
+
+        if (userInput == "c") {
+            createFile();
+        } else if (userInput == "r") {
+            readFile();
+        } else if (userInput == "u") {
+            updateFile();
+        } else if (userInput == "d") {
+            deleteFile();
+        } else if (userInput != "x") {
             std::cout << "Enter a valid response!\n";
-            printInstructionText();
-            std::cin >> userInput;
         }
-    }
+    } while (userInput != "x");
+
+    closeApplication();
+
+    return 0;
 }
