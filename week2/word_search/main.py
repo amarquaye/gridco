@@ -1,3 +1,7 @@
+"""
+Created by Jesse Amarquaye during Industrial Attachment at Ghana Grid Company(GRIDCo).
+"""
+
 import sys
 
 
