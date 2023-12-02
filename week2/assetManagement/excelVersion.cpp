@@ -2,6 +2,9 @@
 #include <fstream>
 #include <string>
 #include <limits>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 void createFile() {
     std::string fileName;
@@ -81,13 +84,28 @@ void deleteFile() {
     }
 }
 
+void showAllFiles() {
+    std::cout << "=== All .txt Files and Information ===\n";
+    for (const auto& entry : fs::directory_iterator(".")) {
+        if (entry.is_regular_file() && entry.path().extension() == ".txt") {
+            std::cout << "File: " << entry.path().filename() << std::endl;
+            std::ifstream input(entry.path());
+            std::string line;
+            while (std::getline(input, line)) {
+                std::cout << "Information: " << line << std::endl;
+            }
+            std::cout << "===============================\n";
+        }
+    }
+}
+
 void closeApplication() {
     std::cout << "Closing Application.......\n";
 }
 
 void printInstructionText() {
     std::cout << "What do you want to do?\n";
-    std::cout << "c(Create), r(Read), u(Update), d(Delete), x(Close Program)\n";
+    std::cout << "c(Create), r(Read), u(Update), d(Delete), s(Show All), x(Close Program)\n";
 }
 
 int main() {
@@ -106,6 +124,8 @@ int main() {
             updateFile();
         } else if (userInput == "d") {
             deleteFile();
+        } else if (userInput == "s") {
+            showAllFiles();
         } else if (userInput != "x") {
             std::cout << "Enter a valid response!\n";
         }
