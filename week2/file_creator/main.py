@@ -1,6 +1,6 @@
-""" Python program to create an empty file just like the touch command in UNIX-based systems 
-
-    Created by Jesse Amarquaye on Tuesday, 28th November, 2023
+"""
+Python program to create an empty file just like the touch command in UNIX-based systems
+Created by Jesse Amarquaye on Tuesday, 28th November 2023.
     
 """
 
@@ -10,7 +10,7 @@ import sys
 def main():
     """ Usage : 'create testfile.txt'
         >>>
-        Creates a empty file with the same name as 'testfile.txt'
+        Creates an empty file with the same name as 'testfile.txt'
     """
     try:
         filename = sys.argv[1]
