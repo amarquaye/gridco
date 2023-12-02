@@ -30,7 +30,7 @@ Just make sure that the arguments you enter are valid filenames.<br>
 
 Like this:
 ```bash
-python main.py [file-to-create]
+python main.py [file-to-remove]
 ```
 Or if you want to remove multiple files:
 ```bash
