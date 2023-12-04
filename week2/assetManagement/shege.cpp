@@ -2,6 +2,27 @@
 #include <fstream>
 #include <string>
 #include <limits>
+#include <filesystem>
+#include <ctime> // for timestamp
+
+namespace fs = std::filesystem;
+
+// Function to write log entry
+void logActivity(const std::string& activity) {
+    std::ofstream logFile("activity_log.txt", std::ios::app);
+    if (logFile.is_open()) {
+        // Get current timestamp
+        std::time_t t = std::time(nullptr);
+        std::tm* timestamp = std::localtime(&t);
+
+        // Write timestamp and activity to the log file
+        logFile << "[" << std::put_time(timestamp, "%Y-%m-%d %H:%M:%S") << "] " << activity << std::endl;
+
+        logFile.close();
+    } else {
+        std::cerr << "Error opening the log file for writing." << std::endl;
+    }
+}
 
 void createFile() {
     std::string fileName;
@@ -20,6 +41,9 @@ void createFile() {
         output << message;
         output.close();
         std::cout << "Information stored!\n";
+
+        // Log the activity
+        logActivity("Created file: " + fileName);
     }
 }
 
@@ -36,6 +60,9 @@ void readFile() {
         while (std::getline(input, line)) {
             std::cout << line << std::endl;
         }
+
+        // Log the activity
+        logActivity("Read from file: " + fileName);
     } else {
         std::cout << "File not found\n";
     }
@@ -59,6 +86,9 @@ void updateFile() {
             output << message;
             output.close();
             std::cout << "File " << fileName << " has been updated\n";
+
+            // Log the activity
+            logActivity("Updated file: " + fileName);
         } else {
             std::cout << "Unable to open the file for updating.\n";
         }
@@ -76,18 +106,42 @@ void deleteFile() {
     int result = std::remove(fileName.c_str());
     if (result == 0) {
         std::cout << "File " << fileName << " has been deleted\n";
+
+        // Log the activity
+        logActivity("Deleted file: " + fileName);
     } else {
         std::cout << "Error deleting the file\n";
     }
 }
 
+void showAllFiles() {
+    std::cout << "=== All .txt Files and Information ===\n";
+    for (const auto& entry : fs::directory_iterator(".")) {
+        if (entry.is_regular_file() && entry.path().extension() == ".txt") {
+            std::cout << "File: " << entry.path().filename() << std::endl;
+            std::ifstream input(entry.path());
+            std::string line;
+            while (std::getline(input, line)) {
+                std::cout << "Information: " << line << std::endl;
+            }
+            std::cout << "===============================\n";
+        }
+    }
+
+    // Log the activity
+    logActivity("Viewed all files");
+}
+
 void closeApplication() {
     std::cout << "Closing Application.......\n";
+
+    // Log the activity
+    logActivity("Closed application");
 }
 
 void printInstructionText() {
     std::cout << "What do you want to do?\n";
-    std::cout << "c(Create), r(Read), u(Update), d(Delete), x(Close Program)\n";
+    std::cout << "c(Create), r(Read), u(Update), d(Delete), s(Show All), x(Close Program)\n";
 }
 
 int main() {
@@ -106,6 +160,8 @@ int main() {
             updateFile();
         } else if (userInput == "d") {
             deleteFile();
+        } else if (userInput == "s") {
+            showAllFiles();
         } else if (userInput != "x") {
             std::cout << "Enter a valid response!\n";
         }

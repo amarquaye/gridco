@@ -1,7 +1,7 @@
 #include <iostream>
 
 int main(){
-    int arr[] = {1, 4, 11, 5, 7, 3, 2, 8};
+    int arr[] = {4, 4, 11, 5, 7, 3, 2, 8};
     int arrsize = sizeof arr/sizeof arr[0];
 
     int i = 0;

@@ -1,5 +1,6 @@
-for(int j = 0; j < arrsize; j++){
-    //     std::cout << arr[j] << " ";
-    // }
+for(int k = 0; k < arrsize; k++){
+        std::cout << arr[k] << " ";
+    }
 
-    // std::cout << std::endl;
+    std::cout << std::endl;
+    
