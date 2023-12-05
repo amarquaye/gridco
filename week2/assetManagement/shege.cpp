@@ -3,7 +3,7 @@
 #include <string>
 #include <limits>
 #include <filesystem>
-#include <ctime> // for timestamp
+#include <ctime> 
 
 namespace fs = std::filesystem;
 
@@ -83,7 +83,7 @@ void updateFile() {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "\n What do you want to update in this file: ";
             std::getline(std::cin, message);
-            output << message;
+            output << "\n" << message;
             output.close();
             std::cout << "File " << fileName << " has been updated\n";
 
@@ -132,6 +132,59 @@ void showAllFiles() {
     logActivity("Viewed all files");
 }
 
+bool createFolderInSameDirectory() {
+    std::string archived = "Archived";
+    try {
+        // Get the current working directory
+        fs::path currentPath = fs::current_path();
+
+ 
+        fs::path folderPath = currentPath / archived;
+
+        // Check if the folder already exists
+        if (!fs::exists(folderPath)) {
+            // Create the folder
+            fs::create_directory(folderPath);
+            //std::cout << "Folder created successfully: " << folderPath << std::endl;
+            return true;
+        } else {
+            //std::cerr << "Folder already exists: " << folderPath << std::endl;
+            return true;
+        }
+    } catch (const std::exception& e) {
+        //std::cerr << "Error creating folder: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+void archiveFile() {
+    std::string fileName;
+    std::cout << "Enter the name of the file you want to archive: ";
+    std::cin >> fileName;
+    fileName += ".txt";
+
+    // Check if the file exists
+    if (fs::exists(fileName)) {
+        // Create the "Archived" folder if it doesn't exist
+        if (createFolderInSameDirectory()) {
+            // Construct the destination path in the "Archived" folder
+            fs::path destinationPath = fs::current_path() / "Archived" / fileName;
+
+            // Move the file to the "Archived" folder
+            fs::rename(fileName, destinationPath);
+
+            std::cout << "File " << fileName << " archived successfully to: " << destinationPath << std::endl;
+
+            // Log the activity
+            logActivity("Archived file: " + fileName);
+        } else {
+            std::cerr << "Error creating the 'Archived' folder.\n";
+        }
+    } else {
+        std::cout << "File not found\n";
+    }
+}
+
 void closeApplication() {
     std::cout << "Closing Application.......\n";
 
@@ -141,7 +194,7 @@ void closeApplication() {
 
 void printInstructionText() {
     std::cout << "What do you want to do?\n";
-    std::cout << "c(Create), r(Read), u(Update), d(Delete), s(Show All), x(Close Program)\n";
+    std::cout << "c(Create), r(Read), u(Update), d(Delete), s(Show All), x(Close Program), a(Archive a file)\n";
 }
 
 int main() {
@@ -162,7 +215,12 @@ int main() {
             deleteFile();
         } else if (userInput == "s") {
             showAllFiles();
-        } else if (userInput != "x") {
+        } 
+        else if(userInput == "a"){
+            createFolderInSameDirectory();
+            archiveFile();
+        }
+        else if (userInput != "x") {
             std::cout << "Enter a valid response!\n";
         }
     } while (userInput != "x");
