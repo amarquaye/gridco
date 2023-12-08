@@ -1,7 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <limits>
+#include <chrono>
+#include <ctime>
 
 class Asset {
 public:
@@ -10,26 +11,9 @@ public:
         : m_assetName(assetName), m_assetEntryDate(assetEntryDate), m_location(location),
           m_description(description), m_quantity(quantity), m_assetAssignment(assetAssignment) {}
 
-    void readAsset() {
-        // Implement the function if needed
-    }
-
-    void updateAsset() {
-        // Implement the function if needed
-    }
-
-    void deleteAsset() {
-        // Implement the function if needed
-    }
-
-    void displayAssets() {
-        std::cout << "Asset Name: " << m_assetName << std::endl;
-        std::cout << "Asset Location: " << m_location << std::endl;
-        std::cout << "Asset Expiry Date: " << m_assetEntryDate << std::endl;
-        std::cout << "Asset Description: " << m_description << std::endl;
-        std::cout << "Asset Quantity: " << m_quantity << std::endl;
-        std::cout << "Assigned to: " << m_assetAssignment << std::endl;
-        // Add display for asset assignment if needed
+    std::string displayAssets() const {
+        return m_assetName + "," + m_assetEntryDate + "," + m_location + "," +
+               m_description + "," + m_quantity + "," + m_assetAssignment;
     }
 
 private:
@@ -40,6 +24,37 @@ private:
     std::string m_quantity;
     std::string m_assetAssignment;
 };
+
+std::string getCurrentDate() {
+    auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::string date = std::ctime(&now);
+    date.pop_back(); // Remove the trailing newline character
+    return date;
+}
+
+bool isFileEmpty(const std::string& filename) {
+    std::ifstream file(filename);
+    return file.peek() == std::ifstream::traits_type::eof();
+}
+
+void writeToCSV(const Asset& asset) {
+    const std::string filename = "Asset.csv";
+
+    std::ofstream output(filename, std::ios::app);
+
+    if (output.is_open()) {
+        // Check if the file is empty, and if so, print the header
+        if (isFileEmpty(filename)) {
+            output << "Name,Entry Date,Location,Description,Quantity,Assigned" << std::endl;
+        }
+
+        output << asset.displayAssets() << std::endl;
+        output.close();
+        std::cout << "Information stored!\n";
+    } else {
+        std::cerr << "Error: Unable to open the file." << std::endl;
+    }
+}
 
 Asset createAsset() {
     std::string assetName;
@@ -53,9 +68,7 @@ Asset createAsset() {
 
     std::cout << "Enter the name of the drug you want to add: " << std::endl;
     std::getline(std::cin, assetName);
-    std::cout << "Enter the end date of the drug: " << std::endl;
-    std::cin >> entryDate;
-    std::cin.ignore();
+    entryDate = getCurrentDate(); // Automate the entry date
     std::cout << "Enter where the drug is being stored: " << std::endl;
     std::getline(std::cin, location);
     std::cout << "Enter the description of the drug: " << std::endl;
@@ -79,23 +92,46 @@ Asset createAsset() {
         assetAssignment = "Not assigned";
     }
 
-    std::ofstream output("Asset.txt", std::ios::app);
-    if (output.is_open()) {
-        output << "Asset Name: " << assetName << std::endl;
-        output << "Asset Entry Date: " << entryDate << std::endl;
-        output << "Asset Location: " << location << std::endl;
-        output << "Asset Description: " << description << std::endl;
-        output << "Asset is Assigned to: " << assetAssignment << std::endl;
-        output << std::endl;
-        output.close();
-        std::cout << "Information stored!\n";
-    }
-    return Asset(assetName, entryDate, location, description, quantity, assetAssignment);
+    Asset newAsset(assetName, entryDate, location, description, quantity, assetAssignment);
+    writeToCSV(newAsset);
+
+    return newAsset;
+}
+
+void closeApplication() {
+    std::cout << "Closing Application.......\n";
+}
+
+void printInstructionText() {
+    std::cout << "What do you want to do?\n";
+    std::cout << "c(Create), r(Read), u(Update), d(Delete), s(Show All), x(Close Program)\n";
 }
 
 int main() {
-    Asset userAsset = createAsset();
-    userAsset.displayAssets();
+    std::string userInput;
+    std::cout << "================= Welcome to Shege Technologies ==================\n";
+
+    do {
+        printInstructionText();
+        std::cin >> userInput;
+
+        if (userInput == "c") {
+            //createFile();
+        } else if (userInput == "r") {
+            //readFile();
+        } else if (userInput == "u") {
+            //updateFile();
+        } else if (userInput == "d") {
+            //deleteFile();
+        } else if (userInput == "s") {
+            //showAllFiles();
+        } 
+        else if (userInput != "x") {
+            std::cout << "Enter a valid response!\n";
+        }
+    } while (userInput != "x");
+
+    closeApplication();
 
     return 0;
 }
