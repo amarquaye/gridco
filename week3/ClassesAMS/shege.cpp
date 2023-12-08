@@ -3,17 +3,22 @@
 #include <string>
 #include <vector>
 #include <ctime>
+#include <cstdlib>
 #include <limits>
+#include <sstream>
 
 class Asset {
 public:
     Asset(const std::string& name, const std::string& colour, const std::string& location,
           const std::string& description, const std::string& quantity, const std::string& assigned)
         : name(name), colour(colour), location(location), description(description),
-          quantity(quantity), assigned(assigned) {}
+          quantity(quantity), assigned(assigned) {
+        assetId = rand() % 9000 + 1000;
+    }
 
     std::string writeAssetToCSV() const {
-        return name + "," + colour + "," + location + "," + description + "," + quantity + "," + assigned;
+        return std::to_string(assetId) + "," + name + "," + colour + "," + location + "," +
+               description + "," + quantity + "," + assigned;
     }
 
     const std::string& getName() const {
@@ -27,6 +32,7 @@ private:
     std::string description;
     std::string quantity;
     std::string assigned;
+    int assetId;
 };
 
 bool isValidAsset(const std::string& name, const std::string& colour,
@@ -70,7 +76,7 @@ void createAssetFile(const std::string& fileName) {
         return;
     }
 
-    outputFile << "Name,Colour,Location,Description,Quantity,Assignment\n";
+    outputFile << "AssetId,Name,Colour,Location,Description,Quantity,Assignment\n";
 
     outputFile.close();
 
@@ -139,11 +145,13 @@ std::vector<std::string> readAssetFromFile(const std::string& fileName, const st
 
     std::vector<std::string> matchingLines;
     std::string line;
-    std::getline(inputFile, line);
+    std::getline(inputFile, line);  // Read the header line and ignore
 
     while (std::getline(inputFile, line)) {
-        size_t pos = line.find(',');
-        std::string currentAssetName = line.substr(0, pos);
+        std::istringstream iss(line);
+        std::string assetIdStr, currentAssetName;
+        std::getline(iss, assetIdStr, ',');  // Read AssetId
+        std::getline(iss, currentAssetName, ',');
 
         if (currentAssetName == assetName) {
             matchingLines.push_back(line);
@@ -202,7 +210,7 @@ void saveAssetToFile(const std::string& fileName, const Asset& asset, bool appen
             return;
         }
 
-        outputFile << "Name,Colour,Location,Description,Quantity,Assignment\n";
+        outputFile << "AssetId,Name,Colour,Location,Description,Quantity,Assignment\n";
     }
 
     if (!outputFile.is_open()) {
@@ -236,8 +244,10 @@ void updateAssetInFile(const std::string& fileName, const std::string& assetName
     tempFile << line << '\n';
 
     while (std::getline(inputFile, line)) {
-        size_t pos = line.find(',');
-        std::string currentAssetName = line.substr(0, pos);
+        std::istringstream iss(line);
+        std::string assetIdStr, currentAssetName;
+        std::getline(iss, assetIdStr, ',');  // Read AssetId
+        std::getline(iss, currentAssetName, ',');
 
         if (currentAssetName == assetName) {
             tempFile << updatedAsset.writeAssetToCSV() << '\n';
@@ -275,7 +285,7 @@ void deleteAssetFromFile(const std::string& fileName, const std::string& assetNa
 
     while (std::getline(inputFile, line)) {
         size_t pos = line.find(',');
-        std::string currentAssetName = line.substr(0, pos);
+        std::string currentAssetName = line.substr(pos + 1);  // Skip the AssetId
 
         if (currentAssetName != assetName) {
             tempFile << line << '\n';
@@ -297,6 +307,8 @@ int main() {
     if (!fileExists(fileName)) {
         createAssetFile(fileName);
     }
+
+    std::srand(static_cast<unsigned>(std::time(0)));
 
     std::string userInput;
     std::cout << "================= Welcome to Shege Technologies ==================\n";
@@ -325,33 +337,66 @@ int main() {
             std::vector<std::string> matchingLines = readAssetFromFile(fileName, assetName);
 
             if (!matchingLines.empty()) {
-                std::string updatedAssetName;
-                std::string updatedAssetColour;
-                std::string updatedAssetLocation;
-                std::string updatedAssetDescription;
-                std::string updatedAssetQuantity;
-                std::string updatedAssetAssigned;
+                std::cout << "Matching Assets:\n";
+                for (const std::string& line : matchingLines) {
+                    std::cout << line << '\n';
+                }
 
-                std::cout << "Enter the updated information:\n";
-                std::cout << "Enter the name of the Asset: ";
-                std::cin >> updatedAssetName;
-                std::cout << "Enter the colour of the Asset: ";
-                std::cin >> updatedAssetColour;
-                std::cout << "Enter where the Asset is being stored: ";
-                std::cin >> updatedAssetLocation;
-                std::cout << "Enter the description of the Asset: ";
-                std::cin >> updatedAssetDescription;
-                std::cout << "Enter the quantity of the Asset: ";
-                std::cin >> updatedAssetQuantity;
-                std::cout << "Is the file to be assigned? (yes/no): ";
-                std::cin >> updatedAssetAssigned;
+                std::cout << "Enter the AssetId of the asset to update: ";
+                int selectedAssetId;
+                std::cin >> selectedAssetId;
 
-                Asset updatedAsset(updatedAssetName, updatedAssetColour, updatedAssetLocation,
-                                    updatedAssetDescription, updatedAssetQuantity, updatedAssetAssigned);
+                for (const std::string& line : matchingLines) {
+                    std::istringstream iss(line);
+                    std::string assetIdStr, currentAssetName;
+                    std::getline(iss, assetIdStr, ',');
+                    int currentAssetId = std::stoi(assetIdStr);
 
-                updateAssetInFile(fileName, assetName, updatedAsset);
-                std::cout << "Asset updated successfully!\n";
-                logEntry("log.txt", "User Updated Asset: " + updatedAssetName);
+                    if (currentAssetId == selectedAssetId) {
+                        std::string updatedAssetName;
+                        std::string updatedAssetColour;
+                        std::string updatedAssetLocation;
+                        std::string updatedAssetDescription;
+                        std::string updatedAssetQuantity;
+                        std::string updatedAssetAssigned;
+                        std::string assigned;
+
+                        std::cout << "Enter the updated information:\n";
+                        std::cout << "Enter the name of the Asset: ";
+                        std::cin >> updatedAssetName;
+                        std::cout << "Enter the colour of the Asset: ";
+                        std::cin >> updatedAssetColour;
+                        std::cout << "Enter where the Asset is being stored: ";
+                        std::cin >> updatedAssetLocation;
+                        std::cout << "Enter the description of the Asset: ";
+                        std::cin >> updatedAssetDescription;
+                        std::cout << "Enter the quantity of the Asset: ";
+                        std::cin >> updatedAssetQuantity;
+                        std::cout << "Is the file to be assigned? (yes/no): ";
+                        std::cin >> assigned;
+
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                        if (assigned == "yes") {
+                            std::cout << "Who is it being assigned to?" << std::endl;
+                            std::getline(std::cin, updatedAssetAssigned);
+                        } else if (assigned == "no") {
+                            std::cout << "Ok!" << std::endl;
+                            updatedAssetAssigned = "Not Assigned.";
+                        } else {
+                            std::cerr << "Please enter the appropriate answer." << std::endl;
+                        }
+
+                        Asset updatedAsset(updatedAssetName, updatedAssetColour, updatedAssetLocation,
+                                            updatedAssetDescription, updatedAssetQuantity, updatedAssetAssigned);
+
+                        updateAssetInFile(fileName, assetName, updatedAsset);
+                        std::cout << "Asset updated successfully!\n";
+                        logEntry("log.txt", "User Updated Asset: " + updatedAssetName);
+
+                        break;
+                    }
+                }
             } else {
                 std::cout << "Asset not found.\n";
             }
