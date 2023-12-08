@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <ctime>
 #include <limits>
 
 class Asset {
@@ -15,7 +16,6 @@ public:
         return name + "," + colour + "," + location + "," + description + "," + quantity + "," + assigned;
     }
 
-    // Getter for the asset name
     const std::string& getName() const {
         return name;
     }
@@ -36,6 +36,47 @@ bool isValidAsset(const std::string& name, const std::string& colour,
            !description.empty() && !quantity.empty() && (assigned == "yes" || assigned == "no");
 }
 
+std::string getCurrentDateTime() {
+    time_t now = time(0);
+    tm* localTime = localtime(&now);
+    char buffer[80];
+    strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", localTime);
+    return buffer;
+}
+
+void logEntry(const std::string& fileName, const std::string& entry) {
+    std::ofstream logFile(fileName, std::ios::app);
+
+    if (!logFile.is_open()) {
+        std::cerr << "Error: Unable to open log file for writing.\n";
+        return;
+    }
+
+    logFile << getCurrentDateTime() << " - " << entry << '\n';
+
+    logFile.close();
+}
+
+bool fileExists(const std::string& fileName) {
+    std::ifstream file(fileName);
+    return file.good();
+}
+
+void createAssetFile(const std::string& fileName) {
+    std::ofstream outputFile(fileName);
+
+    if (!outputFile.is_open()) {
+        std::cerr << "Error: Unable to create file for writing.\n";
+        return;
+    }
+
+    outputFile << "Name,Colour,Location,Description,Quantity,Assignment\n";
+
+    outputFile.close();
+
+    logEntry("log.txt", "File 'Asset.csv' created with header.");
+}
+
 Asset createAsset() {
     std::string name;
     std::string colour;
@@ -45,7 +86,6 @@ Asset createAsset() {
     std::string assigned;
     std::string assignment;
 
-    // Clear the newline character from the buffer
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     do {
@@ -60,13 +100,11 @@ Asset createAsset() {
         std::cout << "Enter the quantity of the Asset: " << std::endl;
         std::cin >> quantity;
 
-        // Clear the newline character from the buffer
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         std::cout << "Is the file to be assigned? (yes/no)" << std::endl;
         std::cin >> assigned;
 
-        // Clear the newline character from the buffer
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         if (assigned == "yes") {
@@ -101,7 +139,7 @@ std::vector<std::string> readAssetFromFile(const std::string& fileName, const st
 
     std::vector<std::string> matchingLines;
     std::string line;
-    std::getline(inputFile, line); // Read header line
+    std::getline(inputFile, line);
 
     while (std::getline(inputFile, line)) {
         size_t pos = line.find(',');
@@ -136,7 +174,7 @@ void showAllAssetsFromFile(const std::string& fileName) {
     }
 
     std::string line;
-    std::getline(inputFile, line); // Read header line
+    std::getline(inputFile, line);
 
     std::cout << "All Assets:\n";
     while (std::getline(inputFile, line)) {
@@ -153,10 +191,18 @@ void printInstructionText() {
 
 void saveAssetToFile(const std::string& fileName, const Asset& asset, bool append) {
     std::ofstream outputFile;
+
     if (append) {
-        outputFile.open(fileName, std::ios::app); // Append to existing file
+        outputFile.open(fileName, std::ios::app);
     } else {
-        outputFile.open(fileName); // Truncate existing file
+        outputFile.open(fileName);
+
+        if (!outputFile.is_open()) {
+            std::cout << "Error: Unable to open file for writing.\n";
+            return;
+        }
+
+        outputFile << "Name,Colour,Location,Description,Quantity,Assignment\n";
     }
 
     if (!outputFile.is_open()) {
@@ -164,15 +210,11 @@ void saveAssetToFile(const std::string& fileName, const Asset& asset, bool appen
         return;
     }
 
-    // Write header if it's a new file
-    if (!append) {
-        outputFile << "Name,Colour,Location,Description,Quantity,Assignment\n";
-    }
-
-    // Write asset
     outputFile << asset.writeAssetToCSV() << '\n';
 
     outputFile.close();
+
+    logEntry("log.txt", "Asset added: " + asset.getName());
 }
 
 void updateAssetInFile(const std::string& fileName, const std::string& assetName, const Asset& updatedAsset) {
@@ -190,27 +232,27 @@ void updateAssetInFile(const std::string& fileName, const std::string& assetName
     }
 
     std::string line;
-    std::getline(inputFile, line); // Read header line
-    tempFile << line << '\n'; // Write header to temp file
+    std::getline(inputFile, line);
+    tempFile << line << '\n';
 
     while (std::getline(inputFile, line)) {
         size_t pos = line.find(',');
         std::string currentAssetName = line.substr(0, pos);
 
         if (currentAssetName == assetName) {
-            // Replace the line with the updated asset
             tempFile << updatedAsset.writeAssetToCSV() << '\n';
         } else {
-            tempFile << line << '\n'; // Write unchanged line to temp file
+            tempFile << line << '\n';
         }
     }
 
     inputFile.close();
     tempFile.close();
 
-    // Replace the original file with the temp file
     std::remove(fileName.c_str());
     std::rename("temp.csv", fileName.c_str());
+
+    logEntry("log.txt", "Asset updated: " + assetName);
 }
 
 void deleteAssetFromFile(const std::string& fileName, const std::string& assetName) {
@@ -228,27 +270,34 @@ void deleteAssetFromFile(const std::string& fileName, const std::string& assetNa
     }
 
     std::string line;
-    std::getline(inputFile, line); // Read header line
-    tempFile << line << '\n'; // Write header to temp file
+    std::getline(inputFile, line);
+    tempFile << line << '\n';
 
     while (std::getline(inputFile, line)) {
         size_t pos = line.find(',');
         std::string currentAssetName = line.substr(0, pos);
 
         if (currentAssetName != assetName) {
-            tempFile << line << '\n'; // Write unchanged line to temp file
+            tempFile << line << '\n';
         }
     }
 
     inputFile.close();
     tempFile.close();
 
-    // Replace the original file with the temp file
     std::remove(fileName.c_str());
     std::rename("temp.csv", fileName.c_str());
+
+    logEntry("log.txt", "Asset deleted: " + assetName);
 }
 
 int main() {
+    std::string fileName = "Asset.csv";
+
+    if (!fileExists(fileName)) {
+        createAssetFile(fileName);
+    }
+
     std::string userInput;
     std::cout << "================= Welcome to Shege Technologies ==================\n";
 
@@ -258,23 +307,24 @@ int main() {
 
         if (userInput == "c") {
             Asset userAsset = createAsset();
-            saveAssetToFile("Asset.csv", userAsset, true);
+            saveAssetToFile(fileName, userAsset, true);
+            logEntry("log.txt", "User created an Asset");
         } else if (userInput == "r") {
             std::cout << "Enter the name of the Asset to read: ";
             std::string assetName;
             std::cin >> assetName;
 
-            std::vector<std::string> matchingLines = readAssetFromFile("Asset.csv", assetName);
+            std::vector<std::string> matchingLines = readAssetFromFile(fileName, assetName);
             printMatchingLines(matchingLines);
+            logEntry("log.txt", "User read Asset: " + assetName);
         } else if (userInput == "u") {
             std::cout << "Enter the name of the Asset to update: ";
             std::string assetName;
             std::cin >> assetName;
 
-            std::vector<std::string> matchingLines = readAssetFromFile("Asset.csv", assetName);
+            std::vector<std::string> matchingLines = readAssetFromFile(fileName, assetName);
 
             if (!matchingLines.empty()) {
-                // Assuming there's only one asset with the given name
                 std::string updatedAssetName;
                 std::string updatedAssetColour;
                 std::string updatedAssetLocation;
@@ -299,8 +349,9 @@ int main() {
                 Asset updatedAsset(updatedAssetName, updatedAssetColour, updatedAssetLocation,
                                     updatedAssetDescription, updatedAssetQuantity, updatedAssetAssigned);
 
-                updateAssetInFile("Asset.csv", assetName, updatedAsset);
+                updateAssetInFile(fileName, assetName, updatedAsset);
                 std::cout << "Asset updated successfully!\n";
+                logEntry("log.txt", "User Updated Asset: " + updatedAssetName);
             } else {
                 std::cout << "Asset not found.\n";
             }
@@ -309,10 +360,12 @@ int main() {
             std::string assetName;
             std::cin >> assetName;
 
-            deleteAssetFromFile("Asset.csv", assetName);
+            deleteAssetFromFile(fileName, assetName);
             std::cout << "Asset deleted successfully!\n";
+            logEntry("log.txt", "User Deleted Asset: " + assetName);
         } else if (userInput == "s") {
-            showAllAssetsFromFile("Asset.csv");
+            showAllAssetsFromFile(fileName);
+            logEntry("log.txt", "User has viewed all Assets");
         } else if (userInput != "x") {
             std::cout << "Enter a valid response!\n";
         }
