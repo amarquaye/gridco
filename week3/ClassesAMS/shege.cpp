@@ -55,6 +55,7 @@ void createAssetFile(const std::string& fileName) {
     outputFile.close();
 }
 
+//for logging 
 void logEntry(const std::string& logFileName, const std::string& activity, const std::string& assetName) {
     std::ofstream logFile(logFileName, std::ios::app);
 
