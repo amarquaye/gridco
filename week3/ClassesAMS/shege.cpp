@@ -55,7 +55,6 @@ void createAssetFile(const std::string& fileName) {
     outputFile.close();
 }
 
-//for logging 
 void logEntry(const std::string& logFileName, const std::string& activity, const std::string& assetName) {
     std::ofstream logFile(logFileName, std::ios::app);
 
@@ -194,7 +193,7 @@ void showAllAssetsFromFile(const std::string& fileName) {
 }
 
 void printInstructionText() {
-    std::cout << "What do you want to do?\n";
+    std::cout << "Select Operation\n";
     std::cout << "c(Create), r(Read), u(Update), d(Delete), s(Show All), x(Close Program)\n";
 }
 
@@ -308,24 +307,26 @@ int main() {
     std::string userInput;
     std::vector<Asset> assets;
 
-    std::cout << "================= Welcome to Shege Technologies ==================\n";
+    std::cout << "================= Asset Management System ==================\n";
+    std::cout << "================= Version 1.1 ==================\n";
+    std::cout << "================= Developed by Shege Technologies ==================\n";
 
     do {
         printInstructionText();
         std::cin >> userInput;
 
-        if (userInput == "c") {
+        if (userInput == "c" && "C") {
             Asset userAsset = createAsset(assets, logFileName);
             assets.push_back(userAsset);
             saveAssetToFile("Asset.csv", userAsset, true, logFileName);
-        } else if (userInput == "r") {
+        } else if (userInput == "r" && "R") {
             std::cout << "Enter the name of the Asset to read: ";
             std::string assetName;
             std::cin >> assetName;
 
             std::vector<std::string> matchingLines = readAssetFromFile("Asset.csv", assetName);
             printMatchingLines(matchingLines);
-        } else if (userInput == "u") {
+        } else if (userInput == "u" && "U") {
             std::cout << "Enter the name of the Asset to update: ";
             std::string assetName;
             std::cin >> assetName;
@@ -342,25 +343,28 @@ int main() {
                 std::string assigned;
 
                 std::cout << "Enter the updated information:\n";
+
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
                 std::cout << "Enter the name of the Asset: ";
-                std::cin >> updatedAssetName;
+                std::getline(std::cin, updatedAssetName);
                 std::cout << "Enter the colour of the Asset: ";
-                std::cin >> updatedAssetColour;
+                std::getline(std::cin, updatedAssetColour);
                 std::cout << "Enter where the Asset is being stored: ";
-                std::cin >> updatedAssetLocation;
+                std::getline(std::cin, updatedAssetLocation);
                 std::cout << "Enter the description of the Asset: ";
-                std::cin >> updatedAssetDescription;
+                std::getline(std::cin, updatedAssetDescription);
                 std::cout << "Enter the quantity of the Asset: ";
-                std::cin >> updatedAssetQuantity;
+                std::getline(std::cin, updatedAssetQuantity);
                 std::cout << "Is the file to be assigned? (yes/no): ";
                 std::cin >> assigned;
 
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-                if (assigned == "yes") {
+                if (assigned == "yes" && "YES" && "Yes") {
                     std::cout << "Who is it being assigned to?" << std::endl;
                     std::getline(std::cin, updatedAssetAssigned);
-                } else if (assigned == "no") {
+                } else if (assigned == "no" && "NO" && "No") {
                     std::cout << "Ok!" << std::endl;
                     updatedAssetAssigned = "Not Assigned.";
                 } else {
@@ -375,18 +379,18 @@ int main() {
             } else {
                 std::cout << "Asset not found.\n";
             }
-        } else if (userInput == "d") {
+        } else if (userInput == "d" && "D") {
             std::cout << "Enter the name of the Asset to delete: ";
             std::string assetName;
             std::cin >> assetName;
 
             deleteAssetFromFile("Asset.csv", assetName, logFileName);
             std::cout << "Asset deleted successfully!\n";
-        } else if (userInput == "s") {
+        } else if (userInput == "s" && "S") {
             showAllAssetsFromFile("Asset.csv");
 
             logEntry(logFileName, "Show All", "N/A");
-        } else if (userInput != "x") {
+        } else if (userInput != "x" && "X") {
             std::cout << "Enter a valid response!\n";
         }
     } while (userInput != "x");
