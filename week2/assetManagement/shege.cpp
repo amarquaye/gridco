@@ -194,12 +194,12 @@ void closeApplication() {
 
 void printInstructionText() {
     std::cout << "What do you want to do?\n";
-    std::cout << "c(Create), r(Read), u(Update), d(Delete), s(Show All), x(Close Program), a(Archive a file)\n";
+    std::cout << "c(Create), r(Read), u(Update), d(Delete), s(Show All), x(Close Program)\n";
 }
 
 int main() {
     std::string userInput;
-    std::cout << "================= Welcome to Shege Pharmacy ==================\n";
+    std::cout << "================= Welcome to Shege Technologies ==================\n";
 
     do {
         printInstructionText();
