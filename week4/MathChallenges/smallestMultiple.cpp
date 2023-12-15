@@ -1,7 +1,5 @@
 #include <iostream>
 
-#include <iostream>
-
 int gcd(int a, int b) {
     while (b != 0) {
         int remainder = a % b;
