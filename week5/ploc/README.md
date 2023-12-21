@@ -39,7 +39,7 @@ To run the application you just have to use this approach:
 
 Type python main.py followed by name of the file.
 
-Just make sure that the argument you enter are valid filenames.
+Just make sure that the argument you enter is a valid filename.
 
 Like this:
 
