@@ -13,4 +13,3 @@ Fourth week at GRIDCo.
 | [multipleof3or5](https://github.com/amarquaye/gridco/blob/master/week4/MathChallenges/multipleof3or5.cpp) | C++ program to determine if a number is a multiple of 3 or 5. |
 | [smallestMultiple](https://github.com/amarquaye/gridco/blob/master/week4/MathChallenges/smallestMultiple.cpp) | C++ program to find the smallest multiple. |
 | [sumoffibonaccievennums](https://github.com/amarquaye/gridco/blob/master/week4/MathChallenges/sumoffibonaccievennums.cpp) | C++ program to find the sum of fibonaccieve numbers. |
-|
