@@ -20,7 +20,7 @@ To run the application you first have to clone the repo.
 
 ### Clone The Repo
 
-Run this *command*:
+Run this _command_:
 
 ```bash
 git clone https://github.com/amarquaye/gridco.git
@@ -41,13 +41,13 @@ Just make sure that the arguments you enter are valid folder-names and also make
 Like this:
 
 ```bash
-python rmfol.py [folder-to-remove]
+python rmfol.py <folder-to-remove>
 ```
 
 Or if you want to remove multiple folders:
 
 ```bash
-python rmfol.py [folder1] [folder2] [folder3] [folder...]
+python rmfol.py <folder1> <folder2> <folder3> <folder...>
 ```
 
 ### Note
@@ -60,4 +60,4 @@ You can contribute to this project by either one of these methods:
 
 - Creating an issue, so we fix or make corrections to make this project better.
 - Fork the repo and make a pull request.
-- Or you can just email me via [jesseamarquayelegendary@gmail.com](mailto:jesseamarquayelegendary@gmail)
+- Or you can just email me via [mail](mailto:engineeramarquaye@gmail.com)

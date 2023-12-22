@@ -23,7 +23,7 @@ To run the application you first have to clone the repo.
 
 ### Clone The Repo
 
-Run this *command*:
+Run this _command_:
 
 ```bash
 git clone https://github.com/amarquaye/gridco.git
@@ -38,19 +38,19 @@ cd gridco/week2/folder_creator
 ### Run the application
 
 To run the application you just have to use this approach.
-Type python *mkfol.py* followed by any number of arguments.
+Type python _mkfol.py_ followed by any number of arguments.
 Just make sure that the arguments you enter are valid folder-names.
 
 Like this:
 
 ```bash
-python mkfol.py [folder-to-create]
+python mkfol.py <folder-to-create>
 ```
 
 Or if you want to create multiple folders:
 
 ```bash
-python mkfol.py [folder1] [folder2] [folder3] [folder...]
+python mkfol.py <folder1> <folder2> <folder3> <folder...>
 ```
 
 ### Note
@@ -63,4 +63,4 @@ You can contribute to this project by either one of these methods:
 
 - Creating an issue, so we fix or make corrections to make this project better.
 - Fork the repo and make a pull request.
-- Or you can just email me via [jesseamarquayelegendary@gmail.com](mailto:jesseamarquayelegendary@gmail)
+- Or you can just email me via [mail](mailto:engineeramarquaye@gmail.com)

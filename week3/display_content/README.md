@@ -21,13 +21,13 @@ To run the application you first have to clone the repo.
 
 ### Clone The Repo
 
-Run this *command*:
+Run this _command_:
 
 ```bash
 git clone https://github.com/amarquaye/gridco.git
 ```
 
-Then *change directory* into the folder
+Then _change directory_ into the folder
 
 ```bash
 cd gridco/week3/display_content
@@ -44,7 +44,7 @@ Just make sure that the argument you enter is a valid filename or folder.
 Like this:
 
 ```bash
-python dc.py [file-or-folder-to-display-content]
+python dc.py <file-or-folder-to-display-content>
 ```
 
 ### Note
@@ -57,4 +57,4 @@ You can contribute to this project by either one of these methods:
 
 - Creating an issue, so we fix or make corrections to make this project better.
 - Fork the repo and make a pull request.
-- Or you can just email me via [jesseamarquayelegendary@gmail.com](mailto:jesseamarquayelegendary@gmail).
+- Or you can just email me via [mail](mailto:engineeramarquaye@gmail.com).

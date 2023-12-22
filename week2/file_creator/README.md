@@ -21,13 +21,13 @@ To run the application you first have to clone the repo.
 
 ### Clone The Repo
 
-Run this *command*:
+Run this _command_:
 
 ```bash
 git clone https://github.com/amarquaye/gridco.git
 ```
 
-Then *change directory* into the folder.
+Then _change directory_ into the folder.
 
 ```bash
 cd gridco/week2/file_creator
@@ -44,13 +44,13 @@ Just make sure that the arguments you enter are valid filenames.
 Like this:
 
 ```bash
-python create.py [file-to-create]
+python create.py <file-to-create>
 ```
 
 Or if you want to create multiple files:
 
 ```bash
-python create.py [file1] [file2] [file3] [file...]
+python create.py <file1> <file2> <file3> <file...>
 ```
 
 ### Note
@@ -63,4 +63,4 @@ You can contribute to this project by either one of these methods:
 
 - Creating an issue, so we fix or make corrections to make this project better.
 - Fork the repo and make a pull request.
-- Or you can just email me via [jesseamarquayelegendary@gmail.com](mailto:jesseamarquayelegendary@gmail)
+- Or you can just email me via [mail](mailto:engineeramarquaye@gmail.com)
